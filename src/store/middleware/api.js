@@ -14,15 +14,16 @@ const api =
   ({ dispatch }) =>
   (next) =>
   async (action) => {
-    next(action);
-    if (action.type !== actions.apiCallBegan.type) return next(action);
+    if (action.type !== actions.apiCallBegan.type) next(action);
     //api call
     //handle resolve casse
-    const { url, method, data, onSuccess, onError } = action.payload;
+    const { url, method, data, onStart, onSuccess, onError } = action.payload;
+    if (onStart) dispatch({ type: onStart });
+    next(action);
     try {
       const reponse = await axios.request({
         baseURL: "http://localhost:3000/api",
-        url: "/bugs",
+        url,
         method,
         data,
       });
@@ -31,9 +32,9 @@ const api =
       if (onSuccess) dispatch({ type: onSuccess, payload: reponse.data });
     } catch (error) {
       // geneal error action
-      dispatch(actions.apiCallFailed(error));
+      dispatch(actions.apiCallFailed(error.message));
       // spesific
-      if (onError) dispatch({ type: onError, payload: error });
+      if (onError) dispatch({ type: onError, payload: error.message });
     }
   };
 

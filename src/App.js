@@ -16,6 +16,7 @@ import { loadBugs } from "./store/bugs";
 const store = configureStore();
 // console.log(store);
 //api
+//store.dispatch(addBug({ description: "aa" }));
 store.dispatch(loadBugs());
 
 /*
